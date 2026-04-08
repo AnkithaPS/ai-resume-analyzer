@@ -52,7 +52,7 @@ src/
 ├── models/
 ├── middlewares/
 ├── services/
-── app.ts
+|── app.ts
 
 # Environment Variables
 
