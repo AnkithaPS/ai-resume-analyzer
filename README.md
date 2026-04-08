@@ -50,6 +50,7 @@ src/
 ├── controllers/
 ├── routes/
 ├── models/
+├── config/
 ├── middlewares/
 ├── services/
 |── app.ts
