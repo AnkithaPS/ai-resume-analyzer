@@ -8,6 +8,9 @@ const resumeSchema = new mongoose.Schema(
     resumeText: {
       type: String,
     },
+    jobDescription: {
+      type: String,
+    },
     analysis: {
       type: Object,
     },

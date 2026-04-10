@@ -7,9 +7,12 @@ const openai = new openAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export const resumeAnalyzer = async (resumeText: string) => {
+export const resumeAnalyzer = async (
+  resumeText: string,
+  jobDescription: string,
+) => {
   const prompt = `
-Analyze the following resume and provide:
+Analyze the following resume with job description and provide:
 1. Score out of 100
 2. Strengths
 3. Weaknesses
@@ -17,7 +20,8 @@ Analyze the following resume and provide:
 5. Suggestions for improvement
 
 Resume:
-${resumeText}
+Job Description: ${jobDescription}
+Resume: ${resumeText}
 
 Return response in JSON format.
 `;

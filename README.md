@@ -2,7 +2,7 @@
 
 # Overview
 
-AI Resume Analyzer is a backend application that evaluates resumes using AI and provides structured insights such as score, strengths, weaknesses, missing skills, and improvement suggestions.
+AI Resume Analyzer is a backend application that evaluates resumes based on job description using AI and provides structured insights such as score, strengths, weaknesses, missing skills, and improvement suggestions.
 
 This project demonstrates:
 
@@ -21,6 +21,12 @@ This project demonstrates:
 - JWT Authentication
 - OpenAI API
 
+# File Processing
+
+- Multer (file upload handling)
+- pdf-parse (PDF parsing)
+- Mammoth (DOCX parsing)
+
 # Features
 
 # Authentication
@@ -31,7 +37,7 @@ This project demonstrates:
 
 # Resume Analysis
 
-- Analyze resume text using AI
+- Analyze resume with job description using AI
 - Generate:
   - Score out of 100
   - Strengths
@@ -53,6 +59,7 @@ src/
 ├── config/
 ├── middlewares/
 ├── services/
+|── utils/
 |── app.ts
 
 # Environment Variables
@@ -95,6 +102,7 @@ GET /api/auth/login
 
 # Analyze Resume (Protected)
 
+**By Json data**
 POST /api/resume/analyze
 Authorization: Bearer <token>
 
@@ -102,6 +110,7 @@ Authorization: Bearer <token>
 
 {
 "resumeText": "Experienced Node.js developer with 5 years..."
+"jobDescription":"Required skill for the position are node.js,express.js,typescript..."
 }
 
 # Sample Response
@@ -116,6 +125,10 @@ Authorization: Bearer <token>
 "suggestions": ["Add cloud-based projects"]
 }
 }
+
+**By file upload**
+POST /api/resume/analyze/file
+Authorization: Bearer <token>
 
 # Testing Flow
 
@@ -135,17 +148,16 @@ Use Postman / Thunder Client.
 
 # Security
 
+- Rate limiting to prevent API abuse
+- Centralized error handling middleware
 - JWT-based route protection
 - Environment variables for sensitive data
 - Password hashing using bcrypt
 
 # Future Improvements
 
-- Resume upload (PDF/DOC parsing)
 - ATS score optimization
-- Job description matching
 - AI-based resume rewriting
-- Rate limiting and caching
 
 # Key Highlights
 

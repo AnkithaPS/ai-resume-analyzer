@@ -1,8 +1,18 @@
 import express from "express";
-import { analyze } from "../controllers/resumeController";
+import { analyze, analyzeFile } from "../controllers/resumeController";
 import { authHandler } from "../middlewares/auth";
-const resumeRouter = express.Router();
+import { limit } from "../middlewares/rateLimiter";
+import { upload } from "../middlewares/upload";
 
-resumeRouter.post("/analyzer", authHandler, analyze);
+const resumeRouter = express.Router();
+console.log("heee");
+resumeRouter.post("/analyzer", authHandler, limit, analyze);
+resumeRouter.post(
+  "/analyzer/file",
+  authHandler,
+  limit,
+  upload.single("resume"),
+  analyzeFile,
+);
 
 export { resumeRouter };
