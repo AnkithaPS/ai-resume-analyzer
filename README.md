@@ -2,7 +2,11 @@
 
 # Overview
 
-AI Resume Analyzer is a backend application that evaluates resumes based on job description using AI and provides structured insights such as score, strengths, weaknesses, missing skills, and improvement suggestions.
+## Overview
+
+AI Resume Analyzer is a backend application that analyzes resumes and evaluates their compatibility with a given job description.
+It leverages AI to generate an ATS (Applicant Tracking System) score and provides structured insights, including strengths, weaknesses, missing skills, and actionable improvement suggestions.
+The system helps users optimize their resumes to increase their chances of passing automated hiring systems and getting shortlisted.
 
 This project demonstrates:
 
@@ -43,6 +47,15 @@ This project demonstrates:
   - Strengths
   - Weaknesses
   - Missing skills
+  - Suggestions
+
+# ATS Analysis
+
+- Evaluate resume compatibility with Applicant Tracking Systems (ATS) by comparing it with job descriptions:
+- Generate:
+  - ATSScore
+  - matchedKeywords
+  - missingKeywords
   - Suggestions
 
 # Data Storage
@@ -98,7 +111,7 @@ POST /api/auth/register
 
 GET /api/auth/login
 
-### 📄 Resume
+# Resume
 
 # Analyze Resume (Protected)
 
@@ -111,18 +124,28 @@ Authorization: Bearer <token>
 {
 "resumeText": "Experienced Node.js developer with 5 years..."
 "jobDescription":"Required skill for the position are node.js,express.js,typescript..."
+"includeATS":true
 }
 
 # Sample Response
 
 {
 "message": "Resume analyzed successfully",
-"data": {
+"data":{
+analysis:{
 "score": 78,
 "strengths": ["Strong backend experience"],
 "weaknesses": ["Limited cloud exposure"],
 "missingSkills": ["AWS", "Docker"],
 "suggestions": ["Add cloud-based projects"]
+},
+ats:{
+"atsScore": 78,
+"matchedKeywords": ["Node.js", "MongoDB"],
+"missingKeywords": ["AWS", "Docker"],
+"suggestions": ["Add AWS project experience"]
+
+}
 }
 }
 
@@ -156,7 +179,6 @@ Use Postman / Thunder Client.
 
 # Future Improvements
 
-- ATS score optimization
 - AI-based resume rewriting
 
 # Key Highlights

@@ -7,7 +7,24 @@ const openai = new openAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export const resumeAnalyzer = async (
+//function for communicating with AI
+const callOpenAI = async (prompt: string) => {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4.1-mini",
+    messages: [{ role: "user", content: prompt }],
+  });
+
+  const result = response.choices[0].message.content;
+
+  try {
+    return JSON.parse(result!);
+  } catch {
+    return { raw: result };
+  }
+};
+
+//Resume Analyzer
+export const analyzeResume = async (
   resumeText: string,
   jobDescription: string,
 ) => {
@@ -25,9 +42,31 @@ Resume: ${resumeText}
 
 Return response in JSON format.
 `;
-  const response = await openai.chat.completions.create({
-    model: "gpt-4.1-mini",
-    messages: [{ role: "user", content: prompt }],
-  });
-  return response.choices[0].message.content;
+  return callOpenAI(prompt);
+};
+
+//ATS analyzer
+export const analyzeATS = async (
+  resumeText: string,
+  jobDescription: string,
+) => {
+  const prompt = `
+You are an ATS system.
+
+Compare the resume with the job description and return STRICT JSON:
+
+{
+  "atsScore": number (0-100),
+  "matchedKeywords": string[],
+  "missingKeywords": string[],
+  "suggestions": string[]
+}
+
+Job Description:
+${jobDescription}
+
+Resume:
+${resumeText}
+`;
+  return callOpenAI(prompt);
 };

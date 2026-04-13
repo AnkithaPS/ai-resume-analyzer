@@ -14,6 +14,9 @@ const resumeSchema = new mongoose.Schema(
     analysis: {
       type: Object,
     },
+    ats: {
+      type: Object,
+    },
   },
   { timestamps: true },
 );
