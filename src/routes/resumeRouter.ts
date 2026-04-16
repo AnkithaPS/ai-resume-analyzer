@@ -5,7 +5,6 @@ import { limit } from "../middlewares/rateLimiter";
 import { upload } from "../middlewares/upload";
 
 const resumeRouter = express.Router();
-console.log("heee");
 resumeRouter.post("/analyzer", authHandler, limit, analyze);
 resumeRouter.post(
   "/analyzer/file",

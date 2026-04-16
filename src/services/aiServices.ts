@@ -1,46 +1,64 @@
-import openAI from "openai";
-import dotenv from "dotenv";
-dotenv.config();
-
-//Configuration
-const openai = new openAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { openai } from "../config/openai";
+import { getRelevantChunks } from "./vectorServices";
+import { getCache, setCache } from "./redisService";
 
 //function for communicating with AI
 const callOpenAI = async (prompt: string) => {
+  const cacheKey = `ai:${prompt}`;
+  //check cache
+  const cached = await getCache(cacheKey);
+  if (cached) {
+    console.log("Cache HIT");
+    return cached;
+  }
+  console.log("Cache MISS");
   const response = await openai.chat.completions.create({
     model: "gpt-4.1-mini",
     messages: [{ role: "user", content: prompt }],
   });
 
   const result = response.choices[0].message.content;
-
+  let parse;
   try {
-    return JSON.parse(result!);
+    parse = JSON.parse(result!);
   } catch {
-    return { raw: result };
+    parse = { raw: result };
   }
+  //Store cache
+  const store = await setCache(cacheKey, parse);
+
+  return parse;
 };
 
 //Resume Analyzer
 export const analyzeResume = async (
   resumeText: string,
   jobDescription: string,
+  userId: string,
 ) => {
+  const query =
+    jobDescription ||
+    "Extract key skills, experience, and achievements from this resume";
+  const relevantChunks = await getRelevantChunks(query, userId);
+  const context =
+    relevantChunks.length > 0 ? relevantChunks.join("\n") : resumeText;
+
   const prompt = `
-Analyze the following resume with job description and provide:
-1. Score out of 100
-2. Strengths
-3. Weaknesses
-4. Missing Skills
-5. Suggestions for improvement
+Analyze the resume using the following relevant context:
 
-Resume:
-Job Description: ${jobDescription}
-Resume: ${resumeText}
+${context}
 
-Return response in JSON format.
+${jobDescription ? `Also consider the job description:\n${jobDescription}` : ""}
+
+Return STRICT JSON:
+
+{
+  "score": number,
+  "strengths": string[],
+  "weaknesses": string[],
+  "missingSkills": string[],
+  "suggestions": string[]
+}
 `;
   return callOpenAI(prompt);
 };
@@ -49,24 +67,31 @@ Return response in JSON format.
 export const analyzeATS = async (
   resumeText: string,
   jobDescription: string,
+  userId: string,
 ) => {
+  const relevantChunks = await getRelevantChunks(jobDescription, userId);
+
+  const context =
+    relevantChunks.length > 0 ? relevantChunks.join("\n") : resumeText;
   const prompt = `
 You are an ATS system.
 
-Compare the resume with the job description and return STRICT JSON:
+Compare the resume with the job description using the context below.
 
-{
-  "atsScore": number (0-100),
-  "matchedKeywords": string[],
-  "missingKeywords": string[],
-  "suggestions": string[]
-}
+Context:
+${context}
 
 Job Description:
 ${jobDescription}
 
-Resume:
-${resumeText}
-`;
+Return STRICT JSON:
+
+{
+  "atsScore": number,
+  "matchedKeywords": string[],
+  "missingKeywords": string[],
+  "suggestions": string[]
+}
+  `;
   return callOpenAI(prompt);
 };

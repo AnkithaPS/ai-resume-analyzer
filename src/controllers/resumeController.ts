@@ -1,6 +1,8 @@
 import { analyzeResume, analyzeATS } from "../services/aiServices";
 import { extractFile } from "../utils/fileParser";
 import Resume from "../models/Resume";
+import { storeEmbedding } from "../services/vectorServices";
+import { vectorStore } from "../store/vectorStore";
 
 const analyze = async (req: any, res: any, next: any) => {
   try {
@@ -8,14 +10,20 @@ const analyze = async (req: any, res: any, next: any) => {
     if (!resumeText) {
       return res.status(400).json({ message: "Resume text is required" });
     }
+    const alreadyExists = vectorStore.some(
+      (item) => item.userId === req.user.id,
+    );
 
+    if (!alreadyExists) {
+      await storeEmbedding(resumeText, req.user.id);
+    }
     //Analyze resume
-    const analyzedData = await analyzeResume(resumeText, jobDescription);
+    const analyzedData = analyzeResume(resumeText, jobDescription, req.user.id);
 
     // ATS only if explicitly requested
     const atsData =
       includeATS && jobDescription
-        ? analyzeATS(resumeText, jobDescription)
+        ? analyzeATS(resumeText, jobDescription, req.user.id)
         : Promise.resolve(null);
 
     // Run in parallel
@@ -46,19 +54,26 @@ const analyzeFile = async (req: any, res: any, next: any) => {
     }
     //Extract text from file
     const resumeText = await extractFile(file);
+
     if (!resumeText || resumeText.trim().length < 50) {
       return res.status(400).json({
         message: "Unable to extract sufficient text from file",
       });
     }
+    const alreadyExists = vectorStore.some(
+      (item) => item.userId === req.user.id,
+    );
 
+    if (!alreadyExists) {
+      await storeEmbedding(resumeText, req.user.id);
+    }
     //Analyze resume
-    const analyzedData = await analyzeResume(resumeText, jobDescription);
+    const analyzedData = analyzeResume(resumeText, jobDescription, req.user.id);
 
     // ATS only if explicitly requested
     const atsData =
       includeATS && jobDescription
-        ? analyzeATS(resumeText, jobDescription)
+        ? analyzeATS(resumeText, jobDescription, req.user.id)
         : Promise.resolve(null);
 
     // Run in parallel
