@@ -112,12 +112,13 @@ src/
 ├── config/
 ├── middlewares/
 ├── services/
-│   ├── aiService.ts
-│   ├── vectorService.ts   # RAG logic
-│   ├── cacheService.ts    # Redis caching
+│   ├── aiServices.ts
+│   ├── vectorServices.ts   # RAG logic
+│   ├── redisService.ts    # Redis caching
 ├── utils/
 │   ├── chunker.ts
 │   ├── embeddings.ts
+│   ├── fileParser.ts
 │   ├── similarity.ts
 ├── store/
 │   └── vectorStore.ts
