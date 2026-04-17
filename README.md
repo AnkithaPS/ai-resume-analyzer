@@ -1,20 +1,26 @@
-# AI Resume Analyzer API (with Authentication)
+# AI Resume Analyzer API (with Authentication, RAG & Caching)
+
+---
 
 # Overview
 
-## Overview
-
 AI Resume Analyzer is a backend application that analyzes resumes and evaluates their compatibility with a given job description.
-It leverages AI to generate an ATS (Applicant Tracking System) score and provides structured insights, including strengths, weaknesses, missing skills, and actionable improvement suggestions.
-The system helps users optimize their resumes to increase their chances of passing automated hiring systems and getting shortlisted.
 
-This project demonstrates:
+It leverages AI along with **Retrieval-Augmented Generation (RAG)** to provide more accurate and context-aware insights. The system also uses **Redis caching** to optimize performance and reduce repeated AI calls.
 
-- Secure backend API development
-- AI integration using LLM APIs
+The application generates an ATS (Applicant Tracking System) score and structured insights including strengths, weaknesses, missing skills, and actionable suggestions.
+
+---
+
+# Key Highlights
+
+- AI-powered resume analysis with contextual understanding (RAG)
+- ATS scoring with keyword matching
+- Redis caching for performance optimization
 - JWT-based authentication
-- MongoDB data modeling
-- Production-ready architecture
+- Scalable and modular backend architecture
+
+---
 
 # Tech Stack
 
@@ -24,12 +30,37 @@ This project demonstrates:
 - MongoDB (Mongoose)
 - JWT Authentication
 - OpenAI API
+- Redis (Caching Layer)
+
+---
 
 # File Processing
 
 - Multer (file upload handling)
 - pdf-parse (PDF parsing)
 - Mammoth (DOCX parsing)
+
+---
+
+# Core Concepts Implemented
+
+# Retrieval-Augmented Generation (RAG)
+
+- Resume text is split into chunks
+- Each chunk is converted into embeddings
+- Embeddings are stored in an in-memory vector store (per user)
+- Relevant chunks are retrieved using cosine similarity based on job description
+- Only relevant context is sent to AI → improves accuracy and reduces noise
+
+---
+
+# Redis Caching
+
+- AI responses are cached using Redis
+- Prevents repeated OpenAI API calls for same input
+- Improves response time and reduces cost
+
+---
 
 # Features
 
@@ -39,9 +70,11 @@ This project demonstrates:
 - User Login
 - JWT-based authentication for protected routes
 
+---
+
 # Resume Analysis
 
-- Analyze resume with job description using AI
+- Analyze resume with job description using AI + RAG
 - Generate:
   - Score out of 100
   - Strengths
@@ -49,22 +82,29 @@ This project demonstrates:
   - Missing skills
   - Suggestions
 
+---
+
 # ATS Analysis
 
-- Evaluate resume compatibility with Applicant Tracking Systems (ATS) by comparing it with job descriptions:
+- Evaluate resume compatibility with job description
 - Generate:
-  - ATSScore
-  - matchedKeywords
-  - missingKeywords
+  - ATS Score
+  - Matched Keywords
+  - Missing Keywords
   - Suggestions
+
+---
 
 # Data Storage
 
 - Stores resume and analysis results in MongoDB
-- User-specific data handling
+- User-specific data isolation (RAG embeddings tied to userId)
+
+---
 
 # Project Structure
 
+```
 src/
 ├── controllers/
 ├── routes/
@@ -72,134 +112,148 @@ src/
 ├── config/
 ├── middlewares/
 ├── services/
-|── utils/
-|── app.ts
+│   ├── aiService.ts
+│   ├── vectorService.ts   # RAG logic
+│   ├── cacheService.ts    # Redis caching
+├── utils/
+│   ├── chunker.ts
+│   ├── embeddings.ts
+│   ├── similarity.ts
+├── store/
+│   └── vectorStore.ts
+├── app.ts
+```
+
+---
 
 # Environment Variables
 
 Create a `.env` file:
 
+```
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key
 OPENAI_API_KEY=your_openai_api_key
+REDIS_URL=redis://localhost:6379
+```
+
+---
 
 # Installation & Run
 
 # 1. Install dependencies
 
+```
 npm install
+```
 
-# 2. Run in development mode
+# 2. Start Redis (required for caching)
 
+```
+redis-server
+```
+
+# 3. Run in development
+
+```
 npm run dev
+```
 
-# 3. Build & run production
+# 4. Production
 
+```
 npm run build
 npm start
+```
+
+---
 
 # API Endpoints
 
 # Auth
 
-# Register
+**POST** `/api/auth/register`
+**POST** `/api/auth/login`
 
-POST /api/auth/register
-
-# Login
-
-GET /api/auth/login
+---
 
 # Resume
 
 # Analyze Resume (Protected)
 
-**By Json data**
-POST /api/resume/analyze
-Authorization: Bearer <token>
+**POST** `/api/resume/analyze`
+Authorization: Bearer `<token>`
+
+---
 
 # Request Body
 
+```
 {
-"resumeText": "Experienced Node.js developer with 5 years..."
-"jobDescription":"Required skill for the position are node.js,express.js,typescript..."
-"includeATS":true
+  "resumeText": "Experienced Node.js developer...",
+  "jobDescription": "Required skills: Node.js, Express...",
+  "includeATS": true
 }
+```
 
-# Sample Response
+---
 
-{
-"message": "Resume analyzed successfully",
-"data":{
-analysis:{
-"score": 78,
-"strengths": ["Strong backend experience"],
-"weaknesses": ["Limited cloud exposure"],
-"missingSkills": ["AWS", "Docker"],
-"suggestions": ["Add cloud-based projects"]
-},
-ats:{
-"atsScore": 78,
-"matchedKeywords": ["Node.js", "MongoDB"],
-"missingKeywords": ["AWS", "Docker"],
-"suggestions": ["Add AWS project experience"]
+# File Upload
 
-}
-}
-}
+**POST** `/api/resume/analyze/file`
 
-**By file upload**
-POST /api/resume/analyze/file
-Authorization: Bearer <token>
+---
 
-# Testing Flow
+# Processing Flow
 
-1. Register user with email and password
-2. Login → get JWT token
-3. Call `/api/resume/analyze` with token
-4. View AI-generated response
+1. User uploads resume
+2. Extract text from file
+3. Text is split into chunks
+4. Embeddings are generated and stored (per user)
+5. Relevant chunks are retrieved based on query (RAG)
+6. Context is sent to AI model
+7. Response is generated
+8. Redis caches the response
+9. Result is stored in MongoDB
 
-Use Postman / Thunder Client.
-
-# Architecture
-
-- MVC pattern (controllers, models, routes)
-- Middleware for authentication and error handling
-- Service layer for AI integration
-- Scalable and modular folder structure
+---
 
 # Security
 
-- Rate limiting to prevent API abuse
-- Centralized error handling middleware
-- JWT-based route protection
-- Environment variables for sensitive data
+- JWT-based authentication
 - Password hashing using bcrypt
+- Rate limiting
+- Centralized error handling
+- Environment-based configuration
+
+---
 
 # Future Improvements
 
 - AI-based resume rewriting
+- Integration with vector databases (Pinecone/Chroma)
+- Multi-session context handling
+- Cloud deployment (AWS/Docker)
 
-# Key Highlights
-
-- Built AI-powered backend system
-- Integrated LLM for real-world use case
-- Implemented authentication & security
-- Designed scalable API architecture
+---
 
 # Author
 
-Backend project built to demonstrate:
+Backend project demonstrating:
 
-- Advanced API development
-- AI integration
-- Production-level backend design
+- Advanced Node.js backend development
+- AI system design (RAG architecture)
+- Performance optimization using caching
+- Scalable API architecture
+
+---
 
 # Conclusion
 
 This project showcases the ability to:
 
-- Build secure and scalable backend systems
-- Integrate AI into real-world applications
-- Follow industry-standard development practices
+- Build production-ready backend systems
+- Implement AI with real-world architecture (RAG)
+- Optimize performance using Redis caching
+- Design scalable and secure APIs
