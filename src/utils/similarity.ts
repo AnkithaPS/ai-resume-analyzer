@@ -1,5 +1,3 @@
-import { validate } from "uuid";
-
 //Similarity checks
 export const cosineSimilarity = (a: number[], b: number[]) => {
   const dot = a.reduce((sum, val, i) => sum + val * b[i], 0);
