@@ -158,7 +158,7 @@ PORT=5000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key
 OPENAI_API_KEY=your_openai_api_key
-REDIS_URL=redis://redis:6379
+REDIS_URL=your_redis_url
 ```
 
 ---
