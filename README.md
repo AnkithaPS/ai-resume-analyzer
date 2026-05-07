@@ -10,6 +10,8 @@ It leverages AI along with **Retrieval-Augmented Generation (RAG)** to provide m
 
 The application generates an ATS (Applicant Tracking System) score and structured insights including strengths, weaknesses, missing skills, and actionable suggestions.
 
+The project is fully containerized using Docker and Docker Compose, enabling consistent development and deployment environments.
+
 ---
 
 # Key Highlights
@@ -18,6 +20,7 @@ The application generates an ATS (Applicant Tracking System) score and structure
 - ATS scoring with keyword matching
 - Redis caching for performance optimization
 - JWT-based authentication
+- Dockerized backend architecture
 - Scalable and modular backend architecture
 
 ---
@@ -31,6 +34,7 @@ The application generates an ATS (Applicant Tracking System) score and structure
 - JWT Authentication
 - OpenAI API
 - Redis (Caching Layer)
+- Docker & Docker Compose
 
 ---
 
@@ -59,6 +63,19 @@ The application generates an ATS (Applicant Tracking System) score and structure
 - AI responses are cached using Redis
 - Prevents repeated OpenAI API calls for same input
 - Improves response time and reduces cost
+
+---
+
+# Docker Containerization
+
+The application is containerized using Docker and Docker Compose.
+
+Docker is used to:
+
+- Standardize development and deployment environments
+- Run backend and Redis services together
+- Simplify project setup using a single command
+- Improve scalability and deployment consistency
 
 ---
 
@@ -123,6 +140,11 @@ src/
 ├── store/
 │   └── vectorStore.ts
 ├── app.ts
+
+Dockerfile
+docker-compose.yml
+.env
+
 ```
 
 ---
@@ -136,7 +158,7 @@ PORT=5000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key
 OPENAI_API_KEY=your_openai_api_key
-REDIS_URL=redis://localhost:6379
+REDIS_URL=redis://redis:6379
 ```
 
 ---
@@ -149,24 +171,46 @@ REDIS_URL=redis://localhost:6379
 npm install
 ```
 
-# 2. Start Redis (required for caching)
+# 2. Run Using Docker Compose
+
+```
+docker-compose up --build
+```
+
+# 3. Start Redis (required for caching)
 
 ```
 redis-server
 ```
 
-# 3. Run in development
+# 4. Run in development
 
 ```
 npm run dev
 ```
 
-# 4. Production
+# 5. Production
 
 ```
 npm run build
 npm start
 ```
+
+---
+
+# Docker Setup
+
+# Dockerfile
+
+The project uses a Dockerfile to containerize the Node.js backend application.
+
+**docker-compose.yml**
+
+Docker Compose is used to orchestrate:
+
+- Node.js backend service
+- Redis caching service
+- MongoDB is hosted on MongoDB Atlas (cloud database).
 
 ---
 
@@ -235,7 +279,7 @@ Authorization: Bearer `<token>`
 - AI-based resume rewriting
 - Integration with vector databases (Pinecone/Chroma)
 - Multi-session context handling
-- Cloud deployment (AWS/Docker)
+- CI/CD pipeline integration
 
 ---
 
@@ -246,6 +290,7 @@ Backend project demonstrating:
 - Advanced Node.js backend development
 - AI system design (RAG architecture)
 - Performance optimization using caching
+- Dockerized backend deployment
 - Scalable API architecture
 
 ---
@@ -257,4 +302,5 @@ This project showcases the ability to:
 - Build production-ready backend systems
 - Implement AI with real-world architecture (RAG)
 - Optimize performance using Redis caching
+- Containerize applications using Docker & Docker Compose
 - Design scalable and secure APIs
