@@ -1,10 +1,14 @@
 import { openai } from "../config/openai";
 import { getRelevantChunks } from "./vectorServices";
 import { getCache, setCache } from "./redisService";
+import crypto from "crypto";
 
 //function for communicating with AI
 const callOpenAI = async (prompt: string) => {
-  const cacheKey = `ai:${prompt}`;
+  const cacheKey = `ai:${crypto
+    .createHash("md5")
+    .update(prompt)
+    .digest("hex")}`;
   //check cache
   const cached = await getCache(cacheKey);
   if (cached) {
@@ -60,6 +64,7 @@ Return STRICT JSON:
   "suggestions": string[]
 }
 `;
+
   return callOpenAI(prompt);
 };
 
