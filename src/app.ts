@@ -4,6 +4,7 @@ import { connectDB } from "./config/db";
 import errorHandler from "./middlewares/errorHandler";
 import { resumeRouter } from "./routes/resumeRouter";
 import { userRouter } from "./routes/userRouter";
+import { swaggerSpec, swaggerUi } from "./config/swagger";
 dotenv.config();
 
 const app = express();
@@ -14,6 +15,7 @@ connectDB();
 //Routes
 app.use("/api/auth", userRouter);
 app.use("/api/resume", resumeRouter);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 //Middleware error handling
 app.use(errorHandler);
 //Server start
