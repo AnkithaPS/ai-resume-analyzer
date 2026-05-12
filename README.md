@@ -21,6 +21,7 @@ The project is fully containerized using Docker and Docker Compose, enabling con
 - Redis caching for performance optimization
 - JWT-based authentication
 - Dockerized backend architecture
+- Swagger/OpenAPI documentation
 - Scalable and modular backend architecture
 
 ---
@@ -35,6 +36,7 @@ The project is fully containerized using Docker and Docker Compose, enabling con
 - OpenAI API
 - Redis (Caching Layer)
 - Docker & Docker Compose
+- Swagger/OpenAPI
 
 ---
 
@@ -76,6 +78,19 @@ Docker is used to:
 - Run backend and Redis services together
 - Simplify project setup using a single command
 - Improve scalability and deployment consistency
+
+---
+
+# Swagger/OpenAPI Documentation
+
+- Interactive API documentation using Swagger UI
+- Supports JWT Bearer Authentication
+- Enables API testing directly from browser
+- Documents request/response schemas and file upload APIs
+
+Swagger URL:
+
+http://localhost:5000/api-docs
 
 ---
 
@@ -214,6 +229,21 @@ Docker Compose is used to orchestrate:
 
 ---
 
+# API Documentation (Swagger)
+
+Open Swagger UI:
+
+http://localhost:5000/api-docs
+
+For protected APIs:
+
+- Login using /api/auth/login
+- Copy JWT token
+- Click Authorize in Swagger UI
+- Enter: <your_token>
+
+---
+
 # API Endpoints
 
 # Auth
@@ -291,6 +321,7 @@ Backend project demonstrating:
 - AI system design (RAG architecture)
 - Performance optimization using caching
 - Dockerized backend deployment
+- API documentation using Swagger/OpenAPI
 - Scalable API architecture
 
 ---
@@ -304,3 +335,4 @@ This project showcases the ability to:
 - Optimize performance using Redis caching
 - Containerize applications using Docker & Docker Compose
 - Design scalable and secure APIs
+- Create self-documenting APIs using Swagger/OpenAPI
