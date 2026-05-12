@@ -9,7 +9,7 @@ const resumeRouter = express.Router();
  * @swagger
  * tags:
  *    name: Resume Analyzer
- *    description: Analyze Resume Api
+ *    description: Resume Analyzer Api
  */
 
 /**
