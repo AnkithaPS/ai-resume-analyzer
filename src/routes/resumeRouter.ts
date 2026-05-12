@@ -8,7 +8,7 @@ const resumeRouter = express.Router();
 /**
  * @swagger
  * tags:
- *    name: Analyze Resume
+ *    name: Resume Analyzer
  *    description: Analyze Resume Api
  */
 
@@ -17,7 +17,7 @@ const resumeRouter = express.Router();
  * /api/resume/analyzer:
  *   post:
  *     summary: Analyze Resume by json data
- *     tags: [Analyze Resume]
+ *     tags: [Resume Analyzer]
  *     requestBody:
  *      required: true
  *      content:
@@ -84,7 +84,7 @@ resumeRouter.post("/analyzer", authHandler, limit, analyze);
  * /api/resume/analyzer/file:
  *   post:
  *     summary: Analyze Resume by file upload
- *     tags: [Analyze Resume]
+ *     tags: [Resume Analyzer]
  *     requestBody:
  *      required: true
  *      content:
